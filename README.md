@@ -1,1 +1,0 @@
-# aws-workshop-datasync-nfs
