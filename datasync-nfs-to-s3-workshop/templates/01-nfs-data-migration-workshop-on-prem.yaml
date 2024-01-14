@@ -2,7 +2,7 @@
 # https://github.com/aws-samples/aws-datasync-migration-workshop/tree/master/workshops/nfs-migration/EN
 
 AWSTemplateFormatVersion: '2010-09-09'
-Description: AWS DataSync Workshop - NFS Migration - On-Premises Region
+Description: AWS DataSync Workshop - NFS Migration - ON-PREMISES Region
 Metadata:
   License:
     Description: |
@@ -24,7 +24,7 @@ Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Parameters:
-          - kp
+          # - kp
           - CommonInstanceType
           - DataSyncAgentInstanceType
       - Label:
@@ -34,8 +34,12 @@ Metadata:
           - fgwAmi
           - dsAmi
     ParameterLabels:
-      kp:
-        default: 'EC2 Key Pair Name (optional):'
+      # kp:
+      #   default: 'EC2 Key Pair Name (optional):'
+      CommonInstanceType:
+        default: 'Common EC2 Instance type'
+      DataSyncAgentInstanceType:
+        default: 'DataSync Agent EC2 and File Gateway EC2 Instance type'
       linuxAmi:
         default: 'Linux'
       fgwAmi:
@@ -44,11 +48,11 @@ Metadata:
         default: 'DataSync'
 
 Parameters:
-  kp:
-    # Setting type as KeyPair will require us to select a KeyPair.
-    Description: 'A key pair is optional.  If not specified, you can access instances through the EC2 console using Session Manager or EC2 Instance Connect.'
-    # Type: AWS::EC2::KeyPair::KeyName
-    Type: String
+  # kp:
+  #   # Setting type as KeyPair will require us to select a KeyPair.
+  #   Description: 'A key pair is optional.  If not specified, you can access instances through the EC2 console using Session Manager or EC2 Instance Connect.'
+  #   # Type: AWS::EC2::KeyPair::KeyName
+  #   Type: String
   linuxAmi:
     Type : 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
     Default: '/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2'
@@ -77,7 +81,7 @@ Parameters:
   DataSyncAgentInstanceType:
     Description: 'DataSync Agent instance type selection - for DataSync EC2 and FileGateway EC2.'
     Type: String
-    Default: m6a.large
+    Default: m6a.xlarge
     AllowedValues:
       - t3a.large
       - t3a.xlarge
@@ -90,11 +94,11 @@ Parameters:
       - m5a.2xlarge
       - m6a.2xlarge
 
-Conditions:
+# Conditions:
   # Allow users to optionally specify an EC2 key pair to use for the
   # instance resources created in this template.  If not specified then
   # users can still use Session Manager from the AWS console.
-  UseEc2Keypair: !Not [ !Equals ['', !Ref 'kp'] ]
+  # UseEc2Keypair: !Not [ !Equals ['', !Ref 'kp'] ]
 
 Resources:
 
@@ -271,7 +275,7 @@ Resources:
             - - NfsServer (
               - !Ref 'AWS::StackName'
               - )
-      KeyName: !If [ 'UseEc2Keypair', !Ref 'kp', !Ref 'AWS::NoValue' ]
+      # KeyName: !If [ 'UseEc2Keypair', !Ref 'kp', !Ref 'AWS::NoValue' ]
       InstanceInitiatedShutdownBehavior: terminate
       BlockDeviceMappings:
         - DeviceName: /dev/xvda
@@ -307,7 +311,7 @@ Resources:
             - - ApplicationServer (
               - !Ref 'AWS::StackName'
               - )
-      KeyName: !If [ 'UseEc2Keypair', !Ref 'kp', !Ref 'AWS::NoValue' ]
+      # KeyName: !If [ 'UseEc2Keypair', !Ref 'kp', !Ref 'AWS::NoValue' ]
       InstanceInitiatedShutdownBehavior: terminate
       BlockDeviceMappings:
         - DeviceName: /dev/xvda
@@ -386,7 +390,7 @@ Resources:
             - - DataSyncAgent (
               - !Ref 'AWS::StackName'
               - )
-      KeyName: !If [ 'UseEc2Keypair', !Ref 'kp', !Ref 'AWS::NoValue' ]
+      # KeyName: !If [ 'UseEc2Keypair', !Ref 'kp', !Ref 'AWS::NoValue' ]
       InstanceInitiatedShutdownBehavior: stop
       BlockDeviceMappings:
         - DeviceName: /dev/xvda
@@ -460,7 +464,7 @@ Resources:
             - - FileGateway (
               - !Ref 'AWS::StackName'
               - )
-      KeyName: !If [ 'UseEc2Keypair', !Ref 'kp', !Ref 'AWS::NoValue' ]
+      # KeyName: !If [ 'UseEc2Keypair', !Ref 'kp', !Ref 'AWS::NoValue' ]
       InstanceInitiatedShutdownBehavior: stop
       BlockDeviceMappings:
         - DeviceName: /dev/xvda
