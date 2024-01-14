@@ -21,13 +21,13 @@ In this module, you will use CloudFormation scripts to deploy resources in two A
   | us-east-2 | US East (Ohio) | [Launch in us-east-2](https://console.aws.amazon.com/cloudformation/home?region=us-east-2#/stacks/new?stackName=DMW-ONPREM&amp;templateURL=https://workshop-cfn-samples.s3.us-west-1.amazonaws.com/datasync-nfs-migration/01-nfs-data-migration-workshop-on-prem.yaml) |
   | eu-west-1 | Ireland | [Launch in eu-west-1](https://console.aws.amazon.com/cloudformation/home?region=eu-west-1#/stacks/new?stackName=DMW-ONPREM&amp;templateURL=https://workshop-cfn-samples.s3.us-west-1.amazonaws.com/datasync-nfs-migration/01-nfs-data-migration-workshop-on-prem.yaml) |
   | eu-central-1 | Frankfurt | [Launch in eu-central-1](https://console.aws.amazon.com/cloudformation/home?region=eu-central-1#/stacks/new?stackName=DMW-ONPREM&amp;templateURL=https://workshop-cfn-samples.s3.us-west-1.amazonaws.com/datasync-nfs-migration/01-nfs-data-migration-workshop-on-prem.yaml) |
+  | ap-southeast-1 | Singapore | [Launch in ap-southeast-1](https://console.aws.amazon.com/cloudformation/home?region=ap-southeast-1#/stacks/new?stackName=DMW-ONPREM&amp;templateURL=https://workshop-cfn-samples.s3.us-west-1.amazonaws.com/datasync-nfs-migration/01-nfs-data-migration-workshop-on-prem.yaml) |
+  | ap-southeast-2 | Sydney | [Launch in ap-southeast-2](https://console.aws.amazon.com/cloudformation/home?region=ap-southeast-2#/stacks/new?stackName=DMW-ONPREM&amp;templateURL=https://workshop-cfn-samples.s3.us-west-1.amazonaws.com/datasync-nfs-migration/01-nfs-data-migration-workshop-on-prem.yaml) |
 
 2. Click **Next** on the Create Stack page.
-3. If you want to access EC2 instances created in this workshop using your local SSH client then enter the name of an EC2 key pair in your selected region.  Otherwise, you can leave the key pair blank.
-3. Click **Next**.
-4. Click **Next**.
-5. Click **Next** again. (skipping the Options and Advanced options sections)
-6. On the Review page, scroll to the bottom and check the box to acknowledge that CloudFormation will create IAM resources, then click  **Create stack**.
+3. Select desired EC2 **Instance Type** - depending on budget. Click **Next**.
+4. Click **Next** on Stack options page.
+5. On the Review page, scroll to the bottom and check the box to acknowledge that CloudFormation will create IAM resources, then click  **Create stack**.
 
 **Note:** Instances that are launched as part of this CloudFormation template may be in the initializing state for few minutes.
 
@@ -45,6 +45,8 @@ While the CloudFormation deployment progresses in the ON-PREMISES region, you ca
   | us-east-2 | US East (Ohio) | [Launch in us-east-2](https://console.aws.amazon.com/cloudformation/home?region=us-east-2#/stacks/new?stackName=DMW-CLOUD&amp;templateURL=https://workshop-cfn-samples.s3.us-west-1.amazonaws.com/datasync-nfs-migration/02-nfs-data-migration-workshop-in-cloud.yaml) |
   | eu-west-1 | Ireland | [Launch in eu-west-1](https://console.aws.amazon.com/cloudformation/home?region=eu-west-1#/stacks/new?stackName=DMW-CLOUD&amp;templateURL=https://workshop-cfn-samples.s3.us-west-1.amazonaws.com/datasync-nfs-migration/02-nfs-data-migration-workshop-in-cloud.yaml) |
   | eu-central-1 | Frankfurt | [Launch in eu-central-1](https://console.aws.amazon.com/cloudformation/home?region=eu-central-1#/stacks/new?stackName=DMW-CLOUD&amp;templateURL=https://workshop-cfn-samples.s3.us-west-1.amazonaws.com/datasync-nfs-migration/02-nfs-data-migration-workshop-in-cloud.yaml) |
+  | ap-southeast-1 | Singapore | [Launch in ap-southeast-1](https://console.aws.amazon.com/cloudformation/home?region=ap-southeast-1#/stacks/new?stackName=DMW-CLOUD&amp;templateURL=https://workshop-cfn-samples.s3.us-west-1.amazonaws.com/datasync-nfs-migration/02-nfs-data-migration-workshop-in-cloud.yaml) |
+  | ap-southeast-2 | Sydney | [Launch in ap-southeast-2](https://console.aws.amazon.com/cloudformation/home?region=ap-southeast-2#/stacks/new?stackName=DMW-CLOUD&amp;templateURL=https://workshop-cfn-samples.s3.us-west-1.amazonaws.com/datasync-nfs-migration/02-nfs-data-migration-workshop-in-cloud.yaml) |
 
 2. Click  **Next**  on the Create stack page.
 3. Click **Next** (there are no stack parameters) **.**
