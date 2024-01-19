@@ -23,6 +23,8 @@ Resources:
         Value: FsxWorkshopAgent
       - Key: OWner
         Value: FSX Workshop
+      - Key: CostCenter
+        Value: Datasync Migration Workshop
 
   SourceLocationSMB:
     Type: AWS::DataSync::LocationSMB
@@ -47,6 +49,8 @@ Resources:
         Value: Source Location SMB Windows Server
       - Key: Owner
         Value: FSX Workshop
+      - Key: CostCenter
+        Value: Datasync Migration Workshop
 
   DestinationLocationFSxWindows:
     Type: AWS::DataSync::LocationFSxWindows
@@ -65,6 +69,8 @@ Resources:
         Value: Destination Location FSX Windows
       - Key: Owner
         Value: FSX Workshop
+      - Key: CostCenter
+        Value: Datasync Migration Workshop
 
   WorkshopDataSyncLogs:
     Type: AWS::Logs::LogGroup
@@ -75,6 +81,11 @@ Resources:
         - ''
         - - DataSyncLogs-
           - !Ref 'AWS::StackName'
+      Tags:
+      - Key: Name
+        Value: DMW-DataSyncLogs
+      - Key: CostCenter
+        Value: Datasync Migration Workshop
 
   WorkshopMigrationTask1:
     Type: AWS::DataSync::Task
@@ -111,3 +122,5 @@ Resources:
         Value: Migration Task SMB to FSX
       - Key: Owner
         Value: FSX Workshop
+      - Key: CostCenter
+        Value: Datasync Migration Workshop

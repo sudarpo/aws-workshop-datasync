@@ -1,11 +1,4 @@
-# Migrate to FSx Windows File Server using AWS DataSync
-
-© 2020 Amazon Web Services, Inc. and its affiliates. All rights reserved.
-This sample code is made available under the MIT-0 license. See the LICENSE file.
-
-Errors or corrections? Contact [jeffbart@amazon.com](mailto:jeffbart@amazon.com).
-
----
+# **AWS DataSync** - Migrate to FSx Windows File Server using AWS DataSync
 
 # Module 1
 ## Deploy resources
@@ -14,26 +7,29 @@ In this module you will deploy all AWS resources necessary to complete this work
 
 It will take approximately 45 minutes to deploy all resources using CloudFormation.
 
-![](../images/fullarch.png)
+![](../images/full-arch-v2.png)
 
 ## Module Steps
 
-#### 1. Deploy AWS resources
+### 1. Deploy AWS resources
 
 1. Click one of the launch links in the table below to deploy workshop resources using CloudFormation.  To avoid errors during deployment, select a region in which you have previously created AWS resources.
 
   | **Region Code** | **Region Name** | **Launch** |
   | --- | --- | --- |
-  | us-west-1 | US West (N. California) | [Launch in us-west-1](https://console.aws.amazon.com/cloudformation/home?region=us-west-1#/stacks/new?stackName=MigrationWorkshop&amp;templateURL=https://aws-datasync-samples.s3-us-west-2.amazonaws.com/workshops/fsxw-migration/datasync-fsx-windows-migration.yaml) |
-  | us-west-2 | US West (Oregon) | [Launch in us-west-2](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=MigrationWorkshop&amp;templateURL=https://aws-datasync-samples.s3-us-west-2.amazonaws.com/workshops/fsxw-migration/datasync-fsx-windows-migration.yaml) |
-  | us-east-1 | US East (N. Virginia) | [Launch in us-east-1](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=MigrationWorkshop&amp;templateURL=https://aws-datasync-samples.s3-us-west-2.amazonaws.com/workshops/fsxw-migration/datasync-fsx-windows-migration.yaml) |
-  | us-east-2 | US East (Ohio) | [Launch in us-east-2](https://console.aws.amazon.com/cloudformation/home?region=us-east-2#/stacks/new?stackName=MigrationWorkshop&amp;templateURL=https://aws-datasync-samples.s3-us-west-2.amazonaws.com/workshops/fsxw-migration/datasync-fsx-windows-migration.yaml) |
-  | eu-west-1 | Ireland | [Launch in eu-west-1](https://console.aws.amazon.com/cloudformation/home?region=eu-west-1#/stacks/new?stackName=MigrationWorkshop&amp;templateURL=https://aws-datasync-samples.s3-us-west-2.amazonaws.com/workshops/fsxw-migration/datasync-fsx-windows-migration.yaml) |
-  | eu-central-1 | Frankfurt | [Launch in eu-central-1](https://console.aws.amazon.com/cloudformation/home?region=eu-central-1#/stacks/new?stackName=MigrationWorkshop&amp;templateURL=https://aws-datasync-samples.s3-us-west-2.amazonaws.com/workshops/fsxw-migration/datasync-fsx-windows-migration.yaml) |
-  | ap-northeast-1 | Tokyo | [Launch in ap-northeast-1](https://console.aws.amazon.com/cloudformation/home?region=ap-northeast-1#/stacks/new?stackName=MigrationWorkshop&amp;templateURL=https://aws-datasync-samples.s3-us-west-2.amazonaws.com/workshops/fsxw-migration/datasync-fsx-windows-migration.yaml) |
+  | us-east-1 | US East (N. Virginia) | [Launch in us-east-1](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=DMWFSX&amp;templateURL=https://workshop-cfn-samples.s3.us-west-1.amazonaws.com/datasync-fsx-migration/10-datasync-fsx-windows-migration.yml) |
+  | us-east-2 | US East (Ohio) | [Launch in us-east-2](https://console.aws.amazon.com/cloudformation/home?region=us-east-2#/stacks/new?stackName=DMWFSX&amp;templateURL=https://workshop-cfn-samples.s3.us-west-1.amazonaws.com/datasync-fsx-migration/10-datasync-fsx-windows-migration.yml) |
+  | us-west-2 | US West (Oregon) | [Launch in us-west-2](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=DMWFSX&amp;templateURL=https://workshop-cfn-samples.s3.us-west-1.amazonaws.com/datasync-fsx-migration/10-datasync-fsx-windows-migration.yml) |
+  | eu-west-1 | Ireland | [Launch in eu-west-1](https://console.aws.amazon.com/cloudformation/home?region=eu-west-1#/stacks/new?stackName=DMWFSX&amp;templateURL=https://workshop-cfn-samples.s3.us-west-1.amazonaws.com/datasync-fsx-migration/10-datasync-fsx-windows-migration.yml) |
+  | eu-west-2 | London | [Launch in eu-west-2](https://console.aws.amazon.com/cloudformation/home?region=eu-west-2#/stacks/new?stackName=DMWFSX&amp;templateURL=https://workshop-cfn-samples.s3.us-west-1.amazonaws.com/datasync-fsx-migration/10-datasync-fsx-windows-migration.yml) |
+  | eu-central-1 | Frankfurt | [Launch in eu-central-1](https://console.aws.amazon.com/cloudformation/home?region=eu-central-1#/stacks/new?stackName=DMWFSX&amp;templateURL=https://workshop-cfn-samples.s3.us-west-1.amazonaws.com/datasync-fsx-migration/10-datasync-fsx-windows-migration.yml) |
+  | eu-south-1 | Milan | [Launch in eu-south-1](https://console.aws.amazon.com/cloudformation/home?region=eu-south-1#/stacks/new?stackName=DMWFSX&amp;templateURL=https://workshop-cfn-samples.s3.us-west-1.amazonaws.com/datasync-fsx-migration/10-datasync-fsx-windows-migration.yml) |
+  | ap-northeast-1 | Tokyo | [Launch in ap-northeast-1](https://console.aws.amazon.com/cloudformation/home?region=ap-northeast-1#/stacks/new?stackName=DMWFSX&amp;templateURL=https://workshop-cfn-samples.s3.us-west-1.amazonaws.com/datasync-fsx-migration/10-datasync-fsx-windows-migration.yml) |
+  | ap-southeast-1 | Singapore | [Launch in ap-southeast-1](https://console.aws.amazon.com/cloudformation/home?region=ap-southeast-1#/stacks/new?stackName=DMWFSX&amp;templateURL=https://workshop-cfn-samples.s3.us-west-1.amazonaws.com/datasync-fsx-migration/10-datasync-fsx-windows-migration.yml) |
+  | ap-southeast-2 | Sydney | [Launch in ap-southeast-2](https://console.aws.amazon.com/cloudformation/home?region=ap-southeast-2#/stacks/new?stackName=DMWFSX&amp;templateURL=https://workshop-cfn-samples.s3.us-west-1.amazonaws.com/datasync-fsx-migration/10-datasync-fsx-windows-migration.yml) |
 
 2. Click **Next** on the Create Stack page.
-3. Keep the Stack Name as-is. Under the **Parameters** section, select an EC2 key pair to allow for SSH and RDP login to instances created by this stack. Enter a name for the domain, along with a NetBIOS name.  The common password will be applied to all users that will be created by the stack.  The password must be at least 8 characters long and include letters, numbers, and at least one symbol.  Do not edit the values for AMI IDs.  When you are done, click **Next**.
+3. Keep the Stack Name as-is. Under the **Parameters** section, enter a name for the domain, along with a NetBIOS name.  The common password will be applied to all users that will be created by the stack.  The password must be at least 8 characters long and include letters, numbers, and at least one symbol.  Do not edit the values for AMI IDs.  When you are done, click **Next**.
 4. Click **Next** again. (skipping the Options and Advanced options sections)
 5. On the Review page, scroll to the bottom and check the box to acknowledge that CloudFormation will create IAM resources, then click  **Create stack**.
 
@@ -41,7 +37,7 @@ Wait for the CloudFormation stack to reach the CREATE\_COMPLETE state before pro
 
 **NOTE:** If the stack fails to deploy because an EC2 instance type is not available in a particular availability zone, delete the stack and retry in the same region or in a different region.
 
-#### 3. Stack Outputs
+### 2. Stack Outputs
 
 Upon completion, each CloudFormation stack will have a list of &quot;Outputs&quot;.  These are values such as IP addresses and resource names that will be used throughout the workshop.  You can either copy these values elsewhere or keep the page open in your browser and refer to them as you go through the workshop.
 
@@ -54,11 +50,18 @@ On the CloudFormation page , click on the **Outputs** tab, as shown in the image
 - **netBiosName** – This is the NetBIOS name of the Active Directory domain that you entered as a parameter when the stack was being created.
 - **windowsServerPrivateIp** – This is the private IP address of the EC2 instance running the Windows Server .  You will copy data from this server to FSx for Windows using DataSync.
 
-<img src="../images/mod1-cfout.png" width="75%" height="75%">
+<img src="../images/mod1-cfout.jpg" width="100%" height="100%">
+
+### 3. Updates
+
+1. Update security group created by Directory Service - Managed Microsoft AD **d-9999999999_controllers**. This security group is too permissive. We should restrict the inbound rules to allow only our VPC CIDR range `10.11.0.0/16`, instead of any traffic `0.0.0.0/0`.
+
+![](../images/mod1-securitygroup.jpg)
 
 ## Validation Step
 
-Open a new tab in your browser and navigate to the AWS management console for FSx.  You should see a new file system created named "DataSync FSx workshop".  Go to the EC2 console page and you should see two new EC2 instances named "Windows-Server" and "DataSyncAgent".
+- Open a new tab in your browser and navigate to the AWS management console for FSx.  You should see a new file system created named "**DMW DataSync FSx**".  
+- Go to the EC2 console page and you should see two new EC2 instances named "**DMW-SMB-Windows-Server-EC2**" and "**DMW-DataSyncAgent-EC2**".
 
 If you do not see these resources, verify that the CloudFormation stack completed with state "CREATE_COMPLETE".
 

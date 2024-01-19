@@ -1,11 +1,4 @@
-# Migrate to FSx Windows File Server using AWS DataSync
-
-© 2020 Amazon Web Services, Inc. and its affiliates. All rights reserved.
-This sample code is made available under the MIT-0 license. See the LICENSE file.
-
-Errors or corrections? Contact [jeffbart@amazon.com](mailto:jeffbart@amazon.com).
-
----
+# **AWS DataSync** - Migrate to FSx Windows File Server using AWS DataSync
 
 # Module 3
 ## Copy files from the Windows Server to FSx using DataSync
@@ -112,7 +105,7 @@ The **datasync** AD user was created automatically in the CloudFormation stack a
 8. Click **Next**.
 9. Verify all task settings then click on **Create task**.
 
-#### 2. Run the DatsSync task
+#### 2. Run the DataSync task
 
 1. Wait for the **Task status** to transition from "Creating" to "Available".
 2. To run the task, click the **Start** button, verify the settings one more time, and then click **Start**.
@@ -132,7 +125,7 @@ If you check the security properties on the various files and folders you will f
 
 ## Module Summary
 
-In this module, you comfigured DataSync, activated your agent, and then successfully made a full copy of data from the Windows Server to the FSx file system.  After the copy was complete, you validated that the data was successfully copied to FSx.
+In this module, you configured DataSync, activated your agent, and then successfully made a full copy of data from the Windows Server to the FSx file system.  After the copy was complete, you validated that the data was successfully copied to FSx.
 
 While this workshop only copied a small amount of data into FSx, DataSync is built to scale easily and efficiently.  AWS customers have used DataSync to copy petabytes of data from on-premises systems into AWS cloud storage, including Amazon S3, Amazon EFS, and Amazon FSx.  Head to the [DataSync product pages](https://aws.amazon.com/datasync/) to learn more about how AWS DataSync can help you with your data migration projects.
 

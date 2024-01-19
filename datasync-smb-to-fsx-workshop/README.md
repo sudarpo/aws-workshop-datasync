@@ -18,17 +18,13 @@ This workshop will walk you through this scenario, using a CloudFormation templa
 
 ## Prerequisites
 
-#### AWS Account
+### AWS Account
 
 In order to complete this workshop, you will need an AWS account with rights to create AWS IAM roles, EC2 instances, FSx file systems, DataSync agents, and CloudFormation stacks in the AWS regions you select.
 
-#### Software
+### Software
 
 - **Internet Browser**  – It is recommended that you use the latest version of Chrome or Firefox for this workshop.
-
-## Cost
-
-It will cost approximately **10.00 USD** to run this workshop.  It is recommended that you follow the cleanup instructions once you have completed the workshop to remove all deployed resources and limit ongoing costs to your AWS account.
 
 ## Workshop modules
 
@@ -40,6 +36,19 @@ This workshop consists of the following modules:
 - [Module 4](module4) - Cleanup resources
 
 To get started, go to [Module 1](module1).
+
+## High-Level Diagram
+
+![](images/full-arch-v2.png)
+
+## Low-Level Diagram
+
+
+
+
+## Cost
+
+It will cost approximately **10.00 USD** to run this workshop.  It is recommended that you follow the cleanup instructions once you have completed the workshop to remove all deployed resources and limit ongoing costs to your AWS account.
 
 ## Related workshops
 

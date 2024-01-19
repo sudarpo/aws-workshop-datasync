@@ -1,11 +1,4 @@
-# Migrate to FSx Windows File Server using AWS DataSync
-
-© 2020 Amazon Web Services, Inc. and its affiliates. All rights reserved.
-This sample code is made available under the MIT-0 license. See the LICENSE file.
-
-Errors or corrections? Contact [jeffbart@amazon.com](mailto:jeffbart@amazon.com).
-
----
+# **AWS DataSync** - Migrate to FSx Windows File Server using AWS DataSync
 
 # Module 2
 ## Configure file shares on the Windows Server and FSx
@@ -14,15 +7,18 @@ In the previous module, you deployed various AWS resources using CloudFormation.
 
 ## Module Steps
 
-#### 1. Login to the Windows Server
+### 1. Login to the Windows Server
 To login to the Windows Server, you will need a Remote Desktop client.  This is available be default on most versions of Windows and MacOS.
 
-1. Go to the EC2 console, select the Windows-Server instance, and click on the **Connect** button.  Click on the **Download Remote Desktop File** button.
-2. Open the Remote Desktop file and when prompted, for the username enter "MYDOMAIN\Admin", replacing "MYDOMAIN" with the NetBIOS name of your domain.  Use the common password you entered when creating the CloudFormation stack.  You can find both the NetBIOS name and the password in the CloudFormation outputs.
+1. Go to the [Systems Manager](https://console.aws.amazon.com/systems-manager/home) > [Fleet Manager](https://console.aws.amazon.com/systems-manager/fleet-manager/managed-nodes), select the **DMW-SMB-Windows-Server-EC2** instance, and click on the **Node actions > Connect > Connect with Remote Desktop**.
 
-    <img src="../images/mod2-rdp.png" width="50%" height="50%">
+    ![](../images/mod2-fleet-manager.jpg)
 
-#### 2. Explore the Departmental folder
+2. Select User credentials, enter username "COMPANY\Admin", replacing "COMPANY" with the NetBIOS name of your domain.  Use the common password you entered when creating the CloudFormation stack.  You can find both the NetBIOS name and the password in the CloudFormation outputs.
+
+    ![](../images/mod2-fleet-manager2.jpg)
+
+### 2. Explore the Departmental folder
 
 1. From the Windows RDP instance, open Windows Explorer and naviate to the C: drive.  At the top-level of the C: drive, you should see a folder named "share1".  Our goal for this workshop is to copy the contents of the share1 folder to FSx.
 
@@ -46,7 +42,7 @@ To login to the Windows Server, you will need a Remote Desktop client.  This is 
 
 So why do you care about security permissions on files?  One of the key benefits of AWS DataSync is that it copies not only file data, but permissions, timestamps, and other file and folder metadata.  In fact, AWS DataSync makes an exact copy of your file system on the destination (in this case, FSx).  This functionality is critical when migrating data from one place to another and DataSync takes care of all of this for you.
 
-#### 3. Create a file share on your Windows Server
+### 3. Create a file share on your Windows Server
 
 In order to copy the data from your Windows Server, AWS DataSync will need a network share that supports the SMB protocol.  To create a network share, follow the steps below:
 
@@ -58,11 +54,11 @@ In order to copy the data from your Windows Server, AWS DataSync will need a net
 
 2. From the PowerShell command line, enter the following command to create a network share:
 
-        New-SMBShare -Name "Share1" -Path "C:\share1" -FullAccess "Everyone”
+        New-SMBShare -Name "Share1" -Path "C:\share1" -FullAccess "Everyone"
 
-    This will create a new network share named "Share1" with read/write access for all users.  This is the share that DataSync will access to copy the share1 folder to FSx.
+    This will create a new network share named `Share1` with read/write access for all users.  This is the share that DataSync will access to copy the share1 folder to FSx.
 
-#### 3. Create a new file share on FSx
+### 4. Create a new file share on FSx
 
 When you create a new FSx file server, it automatically creates a network share named "share".  To show you how to manage FSx file shares, we'll go ahead and create a new share using the steps below.  You can also check out the [FSx documentation](https://docs.aws.amazon.com/fsx/latest/WindowsGuide/managing-file-shares.html) for further details.
 

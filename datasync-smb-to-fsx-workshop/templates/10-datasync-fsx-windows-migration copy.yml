@@ -9,7 +9,20 @@ Description: AWS DataSync to FSx Windows Migration Workshop
 Metadata:
   License:
     Description: |
-      AWS DataSync - Migrating from SMB to FSx Windows. Original source: https://github.com/aws-samples/aws-datasync-fsx-windows-migration
+      Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+
+      Permission is hereby granted, free of charge, to any person obtaining a copy of this
+      software and associated documentation files (the "Software"), to deal in the Software
+      without restriction, including without limitation the rights to use, copy, modify,
+      merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+      permit persons to whom the Software is furnished to do so.
+
+      THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+      INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+      PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+      HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+      OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+      SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ###################################
   AWS::CloudFormation::Interface:
@@ -18,11 +31,12 @@ Metadata:
           default: EC2 Instance Type
         Parameters:
           - SourceSMBWindowsServerInstanceType
+          - BastionHostWindowsServerInstanceType
           - DataSyncAgentInstanceType
-      # - Label:
-      #     default: Security
-      #   Parameters:
-      #     - InstanceKeyPair
+      - Label:
+          default: Security
+        Parameters:
+          - InstanceKeyPair
       - Label:
           default: Windows Configuration
         Parameters:
@@ -33,11 +47,11 @@ Metadata:
           default: AMI IDs (do not edit)
         Parameters:
           - SMBWindows2016Ami
-          # - Win2019Ami
+          - Win2019Ami
           - DataSyncAmi
     ParameterLabels:
-      # InstanceKeyPair:
-      #   default: 'EC2 Key Pair:'
+      InstanceKeyPair:
+        default: 'EC2 Key Pair:'
       domainName:
         default: 'Active Directory Domain Name:'
       netBiosName:
@@ -46,38 +60,42 @@ Metadata:
         default: 'Common password for all users:'
       SMBWindows2016Ami:
         default: 'SMB Windows 2016 AMI'
+      Win2019Ami:
+        default: 'Windows 2019 AMI'
       DataSyncAmi:
         default: 'DataSync AMI'
       SourceSMBWindowsServerInstanceType:
         default: 'SMB Windows Server EC2 instance type'
       DataSyncAgentInstanceType:
         default: 'DataSync Agent EC2 instance type'
+      BastionHostWindowsServerInstanceType:
+        default: 'Bastion Host Windows Server EC2 instance type'
 
 ###################################
 Parameters:
-  # InstanceKeyPair:
-  #   Description: '(NOTE: If you don''t see a key in the list you will need to create
-  #     one from the EC2 console in this region)'
-  #   Type: AWS::EC2::KeyPair::KeyName
+  InstanceKeyPair:
+    Description: '(NOTE: If you don''t see a key in the list you will need to create
+      one from the EC2 console in this region)'
+    Type: AWS::EC2::KeyPair::KeyName
   domainName:
-    Default: 'company.lab'
+    Default: 'super.lab'
     Type: String
   netBiosName:
-    Default: 'COMPANY'
+    Default: 'SUPER'
     Type: String
   commonPassword:
     AllowedPattern: (?=^.{6,255}$)((?=.*\d)(?=.*[A-Z])(?=.*[a-z])|(?=.*\d)(?=.*[^A-Za-z0-9])(?=.*[a-z])|(?=.*[^A-Za-z0-9])(?=.*[A-Z])(?=.*[a-z])|(?=.*\d)(?=.*[A-Z])(?=.*[^A-Za-z0-9]))^.*
     Description: Password for the domain Administrator user. MUST be at least 8 characters
       containing AT LEAST ONE letter, number and symbol. Maximum 45 characters length.
-    MaxLength: '50'
+    MaxLength: '45'
     MinLength: '8'
-    Default: 'PBnjK-3QGq%lB2#45-vbLg#5Q9BfiUfqsR@Gdpy#sojA5'
+    Default: 'f62b54d0c-cf42c418-c954c27d-44d2f9'
     # NoEcho: 'true'
     Type: String
 
-  # Win2019Ami:
-  #   Type : 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
-  #   Default: '/aws/service/ami-windows-latest/Windows_Server-2019-English-Full-Base'
+  Win2019Ami:
+    Type : 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
+    Default: '/aws/service/ami-windows-latest/Windows_Server-2019-English-Full-Base'
   SMBWindows2016Ami:
     Type : 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
     Default: '/aws/service/ami-windows-latest/Windows_Server-2016-English-Full-Base'
@@ -90,36 +108,49 @@ Parameters:
     Type: String
     Default: m6a.large
     AllowedValues:
+      - t3a.small
       - t3a.medium
       - t3a.large
-      - r6a.large
-      - r6a.xlarge
+      - r5a.large
+      - r5a.xlarge
       - m5a.large
-      - m5a.xlarge
-      - m5a.2xlarge
       - m6a.large
+      - m5a.xlarge
       - m6a.xlarge
+      - m5a.2xlarge
       - m6a.2xlarge
-      - m6i.large
-      - m6i.xlarge
-      - m6i.2xlarge
 
   DataSyncAgentInstanceType:
     Description: 'DataSync Agent instance type selection'
     Type: String
-    Default: m6a.xlarge
+    Default: m6a.large
     AllowedValues:
-      - r6a.large
-      - r6a.xlarge
+      - t3a.small
+      - t3a.medium
+      - t3a.large
+      - r5a.large
+      - r5a.xlarge
       - m5a.large
-      - m5a.xlarge
-      - m5a.2xlarge
       - m6a.large
+      - m5a.xlarge
       - m6a.xlarge
+      - m5a.2xlarge
       - m6a.2xlarge
-      - m6i.large
-      - m6i.xlarge
-      - m6i.2xlarge
+
+  BastionHostWindowsServerInstanceType:
+    Description: 'BastionHost Windows Server instance type selection'
+    Type: String
+    Default: m6a.large
+    AllowedValues:
+      - t3a.large
+      - r5a.large
+      - r5a.xlarge
+      - m5a.large
+      - m6a.large
+      - m5a.xlarge
+      - m6a.xlarge
+      - m5a.2xlarge
+      - m6a.2xlarge
 
 ###################################
 Resources:
@@ -133,9 +164,7 @@ Resources:
       InstanceTenancy: default
       Tags:
       - Key: Name
-        Value: DMW-VPC
-      - Key: CostCenter
-        Value: Datasync Migration Workshop
+        Value: DSMWSVPC
         
   dmSubnetPublic1:
     Type: AWS::EC2::Subnet
@@ -149,7 +178,7 @@ Resources:
       MapPublicIpOnLaunch: 'True'
       Tags:
       - Key: Name
-        Value: DMW-AZ1-Public1-Subnet
+        Value: DS-AZ1-Public1-Subnet
   dmSubnetPublic2:
     Type: AWS::EC2::Subnet
     Properties:
@@ -162,7 +191,7 @@ Resources:
       MapPublicIpOnLaunch: 'True'
       Tags:
       - Key: Name
-        Value: DMW-AZ2-Public1-Subnet
+        Value: DS-AZ2-Public1-Subnet
   dmSubnetPublic3:
     Type: AWS::EC2::Subnet
     Properties:
@@ -175,7 +204,7 @@ Resources:
       MapPublicIpOnLaunch: 'True'
       Tags:
       - Key: Name
-        Value: DMW-AZ3-Public1-Subnet
+        Value: DS-AZ3-Public1-Subnet
         
   dmAz1SubnetPrivate1:
     Type: AWS::EC2::Subnet
@@ -188,7 +217,7 @@ Resources:
           - Fn::GetAZs: ""
       Tags:
       - Key: Name
-        Value: DMW-AZ1-Private1-Subnet
+        Value: DS-AZ1-Private1-Subnet
   dmAz1SubnetPrivate2:
     Type: AWS::EC2::Subnet
     Properties:
@@ -200,7 +229,7 @@ Resources:
           - Fn::GetAZs: ""
       Tags:
       - Key: Name
-        Value: DMW-AZ1-Private2-Subnet
+        Value: DS-AZ1-Private2-Subnet
   dmAz2SubnetPrivate1:
     Type: AWS::EC2::Subnet
     Properties:
@@ -212,7 +241,7 @@ Resources:
           - Fn::GetAZs: ""
       Tags:
       - Key: Name
-        Value: DMW-AZ2-Private1-Subnet
+        Value: DS-AZ2-Private1-Subnet
   dmAz2SubnetPrivate2:
     Type: AWS::EC2::Subnet
     Properties:
@@ -224,7 +253,7 @@ Resources:
           - Fn::GetAZs: ""
       Tags:
       - Key: Name
-        Value: DMW-AZ2-Private2-Subnet
+        Value: DS-AZ2-Private2-Subnet
   dmAz3SubnetPrivate1:
     Type: AWS::EC2::Subnet
     Properties:
@@ -236,7 +265,7 @@ Resources:
           - Fn::GetAZs: ""
       Tags:
       - Key: Name
-        Value: DMW-AZ3-Private1-Subnet
+        Value: DS-AZ3-Private1-Subnet
   dmAz3SubnetPrivate2:
     Type: AWS::EC2::Subnet
     Properties:
@@ -248,14 +277,14 @@ Resources:
           - Fn::GetAZs: ""
       Tags:
       - Key: Name
-        Value: DMW-AZ3-Private2-Subnet
+        Value: DS-AZ3-Private2-Subnet
         
   dmInternetGateway:
     Type: AWS::EC2::InternetGateway
     Properties:
       Tags:
       - Key: Name
-        Value: DMW-IGW
+        Value: DSMWSIGW
   dmAttachGateway:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
@@ -268,7 +297,7 @@ Resources:
       VpcId: !Ref 'dmVPC'
       Tags:
       - Key: Name
-        Value: DMW-RouteTable
+        Value: DSMWSRouteTable
         
   dmSubnetPublicRouteAssociation1:
     Type: AWS::EC2::SubnetRouteTableAssociation
@@ -287,6 +316,7 @@ Resources:
       RouteTableId: !Ref 'dmRouteTable'
   dmRoutetoInternet:
     Type: AWS::EC2::Route
+    DependsOn: dmInternetGateway
     Properties:
       RouteTableId: !Ref 'dmRouteTable'
       DestinationCidrBlock: 0.0.0.0/0
@@ -300,7 +330,7 @@ Resources:
       VpcId: !Ref 'dmVPC'
       Tags:
       - Key: Name
-        Value: DMW-DATASYNC-AGENT-EC2-SG
+        Value: DSMWS-DATASYNC-AGENT-EC2-SG
 
   vpcEndpointSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -315,7 +345,7 @@ Resources:
           Description: 'HTTPS'
       Tags:
       - Key: Name
-        Value: DMW-VPCENDPOINT-SG
+        Value: DSMWS-VPCENDPOINT-SG
 
   vpcEndpointDataSyncSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -324,7 +354,7 @@ Resources:
       VpcId: !Ref 'dmVPC'
       Tags:
       - Key: Name
-        Value: DMW-DATASYNC-VPCENDPOINT-SG
+        Value: DSMWS-DATASYNC-VPCENDPOINT-SG
 
   vpcEndpointDataSyncSecurityGroupIngress1:
     Type: AWS::EC2::SecurityGroupIngress
@@ -353,7 +383,7 @@ Resources:
       VpcId: !Ref 'dmVPC'
       Tags:
       - Key: Name
-        Value: DMW-SMB-EC2-SG
+        Value: DSMWS-SMB-EC2-SG
 
   smbEc2SecurityGroupIngress:
     Type: AWS::EC2::SecurityGroupIngress
@@ -365,20 +395,25 @@ Resources:
       ToPort: '445'
       Description: 'Allow SMB from Agent EC2'
 
-  clientWindowsEc2SecurityGroup:
+  bastionHostWindowsEc2SecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: WINDOWS CLIENT EC2 Instance
+      GroupDescription: BASTION HOST EC2 Instance
       VpcId: !Ref 'dmVPC'
       SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '80'
+          ToPort: '80'
+          CidrIp: '0.0.0.0/0'
+          Description: 'HTTP'
         - IpProtocol: tcp
           FromPort: '443'
           ToPort: '443'
           CidrIp: '0.0.0.0/0'
-          Description: 'Allow HTTPS'
+          Description: 'HTTPS'
       Tags:
       - Key: Name
-        Value: DMW-WINCLIENT-EC2-SG
+        Value: DSMWS-BASTION-EC2-SG
 
   fsxWindowsSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -390,30 +425,30 @@ Resources:
           FromPort: '139'
           ToPort: '139'
           CidrIp: '10.11.0.0/16'
-          Description: 'Allow SMB NetBIOS from VPC CIDR'
+          Description: 'SMB NetBIOS - Distributed Computing Environment / End Point Mapper (DCE / EPMAP)'
         - IpProtocol: tcp
           FromPort: '53'
           ToPort: '53'
           CidrIp: '10.11.0.0/16'
-          Description: 'Allow DNS TCP from VPC CIDR'
+          Description: 'DNS'
         - IpProtocol: udp
           FromPort: '53'
           ToPort: '53'
           CidrIp: '10.11.0.0/16'
-          Description: 'Allow DNS UDP from VPC CIDR'
+          Description: 'DNS udp'
       Tags:
       - Key: Name
-        Value: DMW-FSX-SG
+        Value: DSMWS-FSX-SG
 
   fsxWindowsSecurityGroupIngress1:
     Type: AWS::EC2::SecurityGroupIngress
     Properties:
       GroupId: !Ref fsxWindowsSecurityGroup
-      SourceSecurityGroupId: !Ref clientWindowsEc2SecurityGroup
+      SourceSecurityGroupId: !Ref bastionHostWindowsEc2SecurityGroup
       IpProtocol: tcp
       FromPort: '445'
       ToPort: '445'
-      Description: 'Allow SMB from Windows Client EC2'
+      Description: 'Allow SMB from Bastion Host EC2'
 
   fsxWindowsSecurityGroupIngress2:
     Type: AWS::EC2::SecurityGroupIngress
@@ -423,7 +458,7 @@ Resources:
       IpProtocol: tcp
       FromPort: '445'
       ToPort: '445'
-      Description: 'Allow SMB from DataSync Task Network Interfaces'
+      Description: 'Allow SMB from Task Network Interfaces'
 
   locationFsxSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -432,7 +467,7 @@ Resources:
       VpcId: !Ref 'dmVPC'
       Tags:
       - Key: Name
-        Value: DMW-TASK-NIC-SG
+        Value: DSMWS-TASK-NIC-SG
       - Key: Role
         Value: Used by DataSync Task Network Interfaces (location fsx)
 
@@ -452,11 +487,6 @@ Resources:
     Properties:
       DomainName: !Ref domainName
       DomainNameServers: !GetAtt adDS.DnsIpAddresses
-      Tags:
-      - Key: Name
-        Value: DMW-DHCPOptions
-      - Key: CostCenter
-        Value: Datasync Migration Workshop
   dhcpOptionsAssociation:
     Type: AWS::EC2::VPCDHCPOptionsAssociation
     Properties:
@@ -511,7 +541,7 @@ Resources:
         config:
           files:
             c:\cfn\disable-ieesc.ps1:
-              content: |
+              content: !Sub |
                 # Disable Internet Explorer Enhanced Security Configuration
                 function Disable-IEESC
                 {
@@ -650,13 +680,11 @@ Resources:
     Properties:
       ImageId: !Ref SMBWindows2016Ami
       InstanceType: !Ref SourceSMBWindowsServerInstanceType
-      # KeyName: !Ref InstanceKeyPair
+      KeyName: !Ref InstanceKeyPair
       IamInstanceProfile: !Ref 'winInstanceProfile'
       Tags:
         - Key: Name
-          Value: DMW-SMB-Windows-Server-EC2
-        - Key: CostCenter
-          Value: Datasync Migration Workshop
+          Value: SMB-Windows-Server
       BlockDeviceMappings:
         - DeviceName: /dev/sda1
           Ebs:
@@ -678,12 +706,78 @@ Resources:
             cfn-init.exe -v -s ${AWS::StackId} -r SMBWindowsServer --region ${AWS::Region}
             </powershell>
 
+  # EC2 BastionInstance in AWS VPC
+  DSBastionInstance:
+    Type: 'AWS::EC2::Instance'
+    CreationPolicy:
+      ResourceSignal:
+        Timeout: PT30M
+    Properties:
+      SubnetId: !Ref dmSubnetPublic2
+      KeyName: !Ref InstanceKeyPair
+      ImageId: !Ref Win2019Ami
+      InstanceType: !Ref BastionHostWindowsServerInstanceType
+      IamInstanceProfile: !Ref 'winInstanceProfile'
+      SecurityGroupIds: 
+        - !GetAtt bastionHostWindowsEc2SecurityGroup.GroupId
+      BlockDeviceMappings:
+        - DeviceName: /dev/sda1
+          Ebs:
+            VolumeSize: '60'
+            DeleteOnTermination: 'true'
+            VolumeType: gp3
+
+      UserData:
+        Fn::Base64: !Sub |
+          <powershell>
+          Set-ExecutionPolicy Unrestricted -Force
+
+          # Set common password
+          $localpasswd = ConvertTo-SecureString "${CommonPassword}" -asplaintext -force
+          Set-LocalUser -Name Administrator -Password $localpasswd
+
+          ###
+          # Disable Internet Explorer Enhanced Security Configuration
+          function Disable-IEESC
+          {
+              $AdminKey = "HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Components\{A509B1A7-37EF-4b3f-8CFC-4F3A74704073}"
+              Set-ItemProperty -Path $AdminKey -Name "IsInstalled" -Value 0
+              $UserKey = "HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Components\{A509B1A8-37EF-4b3f-8CFC-4F3A74704073}"
+              Set-ItemProperty -Path $UserKey -Name "IsInstalled" -Value 0
+              Stop-Process -Name Explorer
+              Write-Host "IE Enhanced Security Configuration (ESC) has been disabled." -ForegroundColor Green
+          }
+
+          Disable-IEESC
+
+          ###
+          # Join Domain
+          $adminuser = "${netBiosName}\Admin"
+          $adminpassword = ConvertTo-SecureString -AsPlainText "${commonPassword}" -Force
+          $cred = New-Object System.Management.Automation.PSCredential -ArgumentList $adminuser,$adminpassword
+          Add-Computer -DomainName "${domainName}" -Credential $cred
+          Restart-Computer
+          
+          cfn-signal.exe --stack ${AWS::StackId} --resource DSBastionInstance --region ${AWS::Region}
+          </powershell>
+
+      Tags:
+        - Key: Name
+          Value: !Join
+            - ''
+            - - aws-bastion-windows-server-ec2 (
+              - !Ref 'AWS::StackName'
+              - )
+        - Key: Role
+          Value: Bastion Server
+        - Key: OS
+          Value: Windows
+
 ################## FSx for Windows as Target Location
   ### Single-AZ FSX
   fsxFS:
     Type: AWS::FSx::FileSystem
     DependsOn: dhcpOptionsAssociation
-    DeletionPolicy: Delete
     Properties:
       FileSystemType: WINDOWS
       StorageCapacity: 64
@@ -693,9 +787,7 @@ Resources:
         - !Ref fsxWindowsSecurityGroup
       Tags:
         - Key: Name
-          Value: DMW DataSync FSx
-        - Key: CostCenter
-          Value: Datasync Migration Workshop
+          Value: DataSync FSx Workshop
       WindowsConfiguration:
         ActiveDirectoryId: !Ref adDS
         DeploymentType: SINGLE_AZ_1
@@ -784,13 +876,11 @@ Resources:
     Properties:
       ImageId: !Ref DataSyncAmi
       InstanceType: !Ref DataSyncAgentInstanceType
-      # KeyName: !Ref InstanceKeyPair
+      KeyName: !Ref InstanceKeyPair
       IamInstanceProfile: !Ref 'dataSyncAgentInstanceProfile'
       Tags:
         - Key: Name
-          Value: DMW-DataSyncAgent-EC2
-        - Key: CostCenter
-          Value: Datasync Migration Workshop
+          Value: DataSyncAgent
       InstanceInitiatedShutdownBehavior: stop
       BlockDeviceMappings:
         - DeviceName: /dev/xvda
@@ -830,7 +920,6 @@ Resources:
 
   DMSourceLocationUserSecret:
     Type: 'AWS::SecretsManager::Secret'
-    DeletionPolicy: Delete
     Properties:
       Description: SourceLocation User credentials
       Name: DMSourceLocationUserSecret
@@ -840,12 +929,9 @@ Resources:
           Value: DMSourceLocationUserSecret
         - Key: Owner
           Value: DataSync Workshop
-        - Key: CostCenter
-          Value: Datasync Migration Workshop
 
   DMDestinationLocationUserSecret:
     Type: 'AWS::SecretsManager::Secret'
-    DeletionPolicy: Delete
     Properties:
       Description: DestinationLocation User credentials
       Name: DMDestinationLocationUserSecret
@@ -855,8 +941,6 @@ Resources:
           Value: DMDestinationLocationUserSecret
         - Key: Owner
           Value: DataSync Workshop
-        - Key: CostCenter
-          Value: Datasync Migration Workshop
           
 ###################################
 Outputs:
@@ -961,3 +1045,4 @@ Outputs:
   #   Value: !Ref dmSecurityGroup
   #   Export:
   #     Name: datasync-workshop-security-group
+
