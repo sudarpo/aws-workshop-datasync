@@ -14,7 +14,7 @@ It will take approximately 45 minutes to deploy all resources using CloudFormati
 ### 1. Deploy AWS resources
 
 1. Click one of the launch links in the table below to deploy workshop resources using CloudFormation.  To avoid errors during deployment, select a region in which you have previously created AWS resources.
-v
+
   | **Region Code** | **Region Name** | **Launch** |
   | --- | --- | --- |
   | us-east-1 | US East (N. Virginia) | [Launch in us-east-1](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=DMWFSX&amp;templateURL=https://workshop-cfn-samples.s3.us-west-1.amazonaws.com/datasync-fsx-migration/10-datasync-fsx-windows-migration.yml) |
