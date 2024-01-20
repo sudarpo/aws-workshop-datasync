@@ -159,7 +159,7 @@ Although the EC2 instance running the DataSync agent was deployed in the first m
 
 ### 3. Create DataSync resources - Agent, Source location and Destination location, and Task
 
-1. Click one of the launch links in the table below to deploy datasync resources using CloudFormation. Select the **same region** where you deployed your resources in Module 1.
+1. Click one of the launch links in the table below to deploy datasync resources using CloudFormation. Select the **same region** where you deployed your resources in [Module 1](../module1/).
 
   | **Region Code** | **Region Name** | **Launch** |
   | --- | --- | --- |
