@@ -1,0 +1,17 @@
+{
+    "Statement": [
+        {
+            "Sid": "DataSyncLogsToCloudWatchLogs",
+            "Effect": "Allow",
+            "Action": [
+                "logs:PutLogEvents",
+                "logs:CreateLogStream"
+            ],
+            "Principal": {
+                "Service": "datasync.amazonaws.com"
+            },
+            "Resource": "*"
+        }
+    ],
+    "Version": "2012-10-17"
+}
