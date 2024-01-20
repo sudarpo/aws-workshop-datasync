@@ -9,7 +9,7 @@ To run through each workshop, you will need an AWS Account, preferably with Admi
 ## Workshops in this repo
 
 - [NFS server migration using AWS DataSync and Storage Gateway](/datasync-nfs-to-s3-workshop/)
-- [SMB to FSx Windows using AWS DataSync](/datasync-smb-to-fsx-workshop/)
+- [SMB to FSx Windows migration using AWS DataSync](/datasync-smb-to-fsx-workshop/)
 
 ### Related Workshops
 
