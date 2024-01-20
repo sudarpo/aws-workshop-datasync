@@ -14,7 +14,7 @@ It will take approximately 45 minutes to deploy all resources using CloudFormati
 ### 1. Deploy AWS resources
 
 1. Click one of the launch links in the table below to deploy workshop resources using CloudFormation.  To avoid errors during deployment, select a region in which you have previously created AWS resources.
-
+v
   | **Region Code** | **Region Name** | **Launch** |
   | --- | --- | --- |
   | us-east-1 | US East (N. Virginia) | [Launch in us-east-1](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=DMWFSX&amp;templateURL=https://workshop-cfn-samples.s3.us-west-1.amazonaws.com/datasync-fsx-migration/10-datasync-fsx-windows-migration.yml) |
@@ -32,7 +32,7 @@ It will take approximately 45 minutes to deploy all resources using CloudFormati
 3. Keep the Stack Name as-is. Under the **Parameters** section, enter a name for the domain, along with a NetBIOS name.  The common password will be applied to all users that will be created by the stack.  The password must be at least 8 characters long and include letters, numbers, and at least one symbol.  Do not edit the values for AMI IDs.  When you are done, click **Next**.
 4. Click **Next** again. (skipping the Options and Advanced options sections)
 5. On the Review page, scroll to the bottom and check the box to acknowledge that CloudFormation will create IAM resources, then click  **Create stack**.
-
+v
 Wait for the CloudFormation stack to reach the CREATE\_COMPLETE state before proceeding to the next steps.  It will take about **45 minutes** for the CloudFormation stack to complete.
 
 **NOTE:** If the stack fails to deploy because an EC2 instance type is not available in a particular availability zone, delete the stack and retry in the same region or in a different region.
@@ -44,24 +44,17 @@ Upon completion, each CloudFormation stack will have a list of &quot;Outputs&quo
 On the CloudFormation page , click on the **Outputs** tab, as shown in the image below.  You should see the following values listed:
 
 - **commonPassword** – This is the password that is used for all Active Directory users.  Any time you are required to enter a password, it will be this one.
-- **dataSyncAgentPublicIP** – This is the public IP address of the EC2 instance running the DataSync agent.  You will use this when activating the DataSync agent.
 - **dataSyncVpcEndpointId** - This is the ID of the DataSync VPC endpoint.  You will use this when activating the DataSync agent.
 - **domainName** – This is the full name of the Active Directory domain that you entered as a parameter when the stack was being created.
 - **netBiosName** – This is the NetBIOS name of the Active Directory domain that you entered as a parameter when the stack was being created.
-- **windowsServerPrivateIp** – This is the private IP address of the EC2 instance running the Windows Server .  You will copy data from this server to FSx for Windows using DataSync.
+- **SMBWindowsServerPrivateIP** – This is the private IP address of the EC2 instance running the Windows Server .  You will copy data from this server to FSx for Windows using DataSync.
 
-<img src="../images/mod1-cfout.jpg" width="100%" height="100%">
-
-### 3. Updates
-
-1. Update security group created by Directory Service - Managed Microsoft AD **d-9999999999_controllers**. This security group is too permissive. We should restrict the inbound rules to allow only our VPC CIDR range `10.11.0.0/16`, instead of any traffic `0.0.0.0/0`.
-
-![](../images/mod1-securitygroup.jpg)
+    ![](../images/mod1-cfout.jpg)
 
 ## Validation Step
 
 - Open a new tab in your browser and navigate to the AWS management console for FSx.  You should see a new file system created named "**DMW DataSync FSx**".  
-- Go to the EC2 console page and you should see two new EC2 instances named "**DMW-Windows-Client-EC2**", "**DMW-SMB-Windows-Server-EC2**", "**DMW-DataSyncAgent-EC2**".
+- Go to the EC2 console page and you should see two new EC2 instances named "**DMW-App-Server-EC2**", "**DMW-SMB-Windows-Server-EC2**", "**DMW-DataSyncAgent-EC2**".
 
 If you do not see these resources, verify that the CloudFormation stack completed with state "CREATE_COMPLETE".
 

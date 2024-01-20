@@ -8,9 +8,9 @@ In the previous module, you deployed various AWS resources using CloudFormation.
 ## Module Steps
 
 ### 1. Login to the Windows Server
-To login to the Windows Server, you will use Fleet Manager.
+To login to the Windows Server, you will use Fleet Manager - Remote Desktop.
 
-1. Go to the [Systems Manager](https://console.aws.amazon.com/systems-manager/home) > [Fleet Manager](https://console.aws.amazon.com/systems-manager/fleet-manager/managed-nodes), select the **DMW-Windows-Client-EC2** instance, and click on the **Node actions > Connect > Connect with Remote Desktop**.
+1. Go to the [Systems Manager](https://console.aws.amazon.com/systems-manager/home) > [Fleet Manager](https://console.aws.amazon.com/systems-manager/fleet-manager/managed-nodes), select the **DMW-App-Server-EC2** instance, and click on the **Node actions > Connect > Connect with Remote Desktop**.
 
     ![](../images/mod2-fleet-manager.jpg)
 
@@ -20,19 +20,17 @@ To login to the Windows Server, you will use Fleet Manager.
 
 ### 2. Explore the Departmental folder
 
-1. From the Fleet Manager - Remote Desktop instance, open File Explorer and navigate to the private IP of the SMB-Windows-Server - `\\SMB-Windows-PrivateIP\share1`.  At the top-level of the C: drive, you should see a folder named "share1".  Our goal for this workshop is to copy the contents of the share1 folder to FSx.
+1. From the Fleet Manager - Remote Desktop instance, open File Explorer and navigate to the private IP of the SMB-Windows-Server - `\\SMBWindowsServerPrivateIP\share1`.  At the top-level of the C: drive, you should see a folder named "share1".  Our goal for this workshop is to copy the contents of the share1 folder to FSx.
 
-2. Right-click on the share1 folder, select **Properties**, click on the **Security** tab, then click on the **Advanced** button.  This will display information about the permissions on the share1 folder.  This is one way to view the Access Control List (ACL) for a file or folder.
+2. Right-click on the `share1` folder, select **Properties**, click on the **Security** tab, then click on the **Advanced** button.  This will display information about the permissions on the share1 folder.  This is one way to view the Access Control List (ACL) for a file or folder.
 
-    <img src="../images/mod2-acl.png" width="75%" height="75%">
+    ![](../images/mod2-share1.jpg)
 
     You can see that there are three permission entries on this folder: one for the Windows SYSTEM user, one for the Active Directory Domain Users group, and one for a group called AWS Delegated FSx Administrators.  This last group is created automatically by the AWS Managed AD service and has rights similar to the Domain Admins group.
 
     At the top of the window, you can also see the owner of the folder, which in this case is the Active Directory Admin user.  In most cases, the Owner of a folder or file will be the name of the account that created it.
 
-4. Close the security windows and open the share1 folder. You should see four folders: Finance, HR, Legal, Shared. Each directory has a few sub-folders and files.
-
-    ![](../images/mod2-share1.jpg)
+4. Close the security windows and open the `share1` folder. You should see four folders: Finance, HR, Legal, Shared. Each directory has a few sub-folders and files.
 
     As you did in the previous step, right-click on one of the directories to view the security properties.  For example, here is what you should see for the Finance folder:
 
@@ -42,7 +40,7 @@ To login to the Windows Server, you will use Fleet Manager.
 
 So why do you care about security permissions on files?  One of the key benefits of AWS DataSync is that it copies not only file data, but permissions, timestamps, and other file and folder metadata.  In fact, AWS DataSync makes an exact copy of your file system on the destination (in this case, FSx).  This functionality is critical when migrating data from one place to another and DataSync takes care of all of this for you.
 
-5. You can also add more files to `\\SMB-Windows-PrivateIP\share1` folder.
+5. You can also add more files to `\\SMBWindowsServerPrivateIP\share1` folder.
 
 ### 3. Create a new file share on FSx
 

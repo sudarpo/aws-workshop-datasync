@@ -37,6 +37,8 @@ When you create a DataSync task, it can be configured to write logs to a CloudWa
 
   where `<full-path-to-policy-file>` is the file on your local machine that was created in step #1 above and `<region>` is the AWS region you are using for the workshop.
 
+## Manual Method for Step 2-5
+
 ### 2. Activate the DataSync agent
 
 Although the EC2 instance running the DataSync agent was deployed in the first module, before they can be used they first need to be activated.  Follow the steps below to activate the agent.
@@ -126,7 +128,7 @@ When working with VPC Endpoints, DataSync will create ENI (Elastic Network Inter
 
 7. Scroll down to the **Task logging** section.  Under **Log level**, select "Log all transferred objects and files".  Under **CloudWatch Log group**, select the group named "DataSyncLogs-MigrationWorkshop".
 
-    <img src="../images/mod3-logging.png" width="65%" height="65%">
+    ![](../images/mod3-logging.jpg)
 
 8. Click **Next**.
 9. Verify all task settings then click on **Create task**.

@@ -596,21 +596,21 @@ Resources:
       Description: 'DataSync Agent to Task Network Interface - For data transfer from the DataSync VM to the AWS service.'
 
   # This is needed because the Managed AD service will be our DNS server.
-  dhcpOptions:
-    Type: AWS::EC2::DHCPOptions
-    Properties:
-      DomainName: !Ref domainName
-      DomainNameServers: !GetAtt adDS.DnsIpAddresses
-      Tags:
-      - Key: Name
-        Value: DMW-DHCPOptions
-      - Key: CostCenter
-        Value: Datasync Migration Workshop
-  dhcpOptionsAssociation:
-    Type: AWS::EC2::VPCDHCPOptionsAssociation
-    Properties:
-      DhcpOptionsId: !Ref dhcpOptions
-      VpcId: !Ref dmVPC
+  # dhcpOptions:
+  #   Type: AWS::EC2::DHCPOptions
+  #   Properties:
+  #     DomainName: !Ref domainName
+  #     DomainNameServers: !GetAtt adDS.DnsIpAddresses
+  #     Tags:
+  #     - Key: Name
+  #       Value: DMW-DHCPOptions
+  #     - Key: CostCenter
+  #       Value: Datasync Migration Workshop
+  # dhcpOptionsAssociation:
+  #   Type: AWS::EC2::VPCDHCPOptionsAssociation
+  #   Properties:
+  #     DhcpOptionsId: !Ref dhcpOptions
+  #     VpcId: !Ref dmVPC
 
   winInstanceProfile:
     Type: AWS::IAM::InstanceProfile
@@ -634,23 +634,23 @@ Resources:
         - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
 
 ################### AWS Directory Service - Microsoft AD Active Directory
-  adDS:
-    Type: AWS::DirectoryService::MicrosoftAD
-    Properties:
-      Edition: 'Standard'
-      Name: !Ref domainName
-      Password: !Ref commonPassword
-      ShortName: !Ref netBiosName
-      VpcSettings:
-        SubnetIds:
-          - !Ref dmIdentitySubnet1
-          - !Ref dmIdentitySubnet2
-        VpcId: !Ref dmVPC
+  # adDS:
+  #   Type: AWS::DirectoryService::MicrosoftAD
+  #   Properties:
+  #     Edition: 'Standard'
+  #     Name: !Ref domainName
+  #     Password: !Ref commonPassword
+  #     ShortName: !Ref netBiosName
+  #     VpcSettings:
+  #       SubnetIds:
+  #         - !Ref dmIdentitySubnet1
+  #         - !Ref dmIdentitySubnet2
+  #       VpcId: !Ref dmVPC
 
 ################## Windows Server as SMB Data Source
   SMBWindowsServer:
     Type: AWS::EC2::Instance
-    DependsOn: dhcpOptionsAssociation
+    # DependsOn: dhcpOptionsAssociation
     CreationPolicy:
       ResourceSignal:
         Timeout: PT30M
@@ -785,13 +785,13 @@ Resources:
  
                 New-SMBShare -Name "share1" -Path "C:\share1" -FullAccess "Everyone"
           commands:
-            1-joinDomain:
-              command: "powershell.exe c:\\cfn\\joindomain.ps1"
-              waitAfterCompletion: forever
-            2-initUsersAndGroups:
-              command: "powershell.exe c:\\cfn\\initusersandgroups.ps1"
-            3-initShareFolder:
-              command: "powershell.exe c:\\cfn\\initsharefolder.ps1"
+            # 1-joinDomain:
+            #   command: "powershell.exe c:\\cfn\\joindomain.ps1"
+            #   waitAfterCompletion: forever
+            # 2-initUsersAndGroups:
+            #   command: "powershell.exe c:\\cfn\\initusersandgroups.ps1"
+            # 3-initShareFolder:
+            #   command: "powershell.exe c:\\cfn\\initsharefolder.ps1"
             4-disableIEESC:
               command: "powershell.exe c:\\cfn\\disable-ieesc.ps1"
             5-finishUp:
@@ -809,7 +809,7 @@ Resources:
       BlockDeviceMappings:
         - DeviceName: /dev/sda1
           Ebs:
-            VolumeSize: '60'
+            VolumeSize: '50'
             DeleteOnTermination: 'true'
             VolumeType: gp3
       NetworkInterfaces:
@@ -824,31 +824,32 @@ Resources:
             <powershell>
             $localpasswd = ConvertTo-SecureString "${commonPassword}" -asplaintext -force
             Set-LocalUser -Name Administrator -Password $localpasswd
+            Set-LocalUser -Name Admin1 -Password $localpasswd
             cfn-init.exe -v -s ${AWS::StackId} -r SMBWindowsServer --region ${AWS::Region}
             </powershell>
 
 ################## FSx for Windows as Target Location
   ### Single-AZ FSX
-  fsxFS:
-    Type: AWS::FSx::FileSystem
-    DependsOn: dhcpOptionsAssociation
-    DeletionPolicy: Delete
-    Properties:
-      FileSystemType: WINDOWS
-      StorageCapacity: 64
-      SubnetIds:
-        - !Ref dmDataSubnet2
-      SecurityGroupIds:
-        - !Ref fsxWindowsSecurityGroup
-      Tags:
-        - Key: Name
-          Value: DMW DataSync FSx
-        - Key: CostCenter
-          Value: Datasync Migration Workshop
-      WindowsConfiguration:
-        ActiveDirectoryId: !Ref adDS
-        DeploymentType: SINGLE_AZ_1
-        ThroughputCapacity: 16
+  # fsxFS:
+  #   Type: AWS::FSx::FileSystem
+  #   DependsOn: dhcpOptionsAssociation
+  #   DeletionPolicy: Delete
+  #   Properties:
+  #     FileSystemType: WINDOWS
+  #     StorageCapacity: 64
+  #     SubnetIds:
+  #       - !Ref dmDataSubnet2
+  #     SecurityGroupIds:
+  #       - !Ref fsxWindowsSecurityGroup
+  #     Tags:
+  #       - Key: Name
+  #         Value: DMW DataSync FSx
+  #       - Key: CostCenter
+  #         Value: Datasync Migration Workshop
+  #     WindowsConfiguration:
+  #       ActiveDirectoryId: !Ref adDS
+  #       DeploymentType: SINGLE_AZ_1
+  #       ThroughputCapacity: 16
 
   # ### Multi-AZ FSX
   # fsxFS:
@@ -874,7 +875,7 @@ Resources:
   ################## EC2 App-Server
   AppServerEC2:
     Type: 'AWS::EC2::Instance'
-    DependsOn: dhcpOptionsAssociation
+    # DependsOn: dhcpOptionsAssociation
     CreationPolicy:
       ResourceSignal:
         Timeout: PT30M
@@ -888,7 +889,7 @@ Resources:
       BlockDeviceMappings:
         - DeviceName: /dev/sda1
           Ebs:
-            VolumeSize: '60'
+            VolumeSize: '50'
             DeleteOnTermination: 'true'
             VolumeType: gp3
 
@@ -900,6 +901,7 @@ Resources:
           # Set common password
           $localpasswd = ConvertTo-SecureString "${commonPassword}" -asplaintext -force
           Set-LocalUser -Name Administrator -Password $localpasswd
+          Set-LocalUser -Name Admin1 -Password $localpasswd
 
           ###
           # Disable Internet Explorer Enhanced Security Configuration
@@ -916,16 +918,15 @@ Resources:
           Disable-IEESC
 
           ###
-          # Join Domain
-          $adminuser = "${netBiosName}\Admin"
-          $adminpassword = ConvertTo-SecureString -AsPlainText "${commonPassword}" -Force
-          $cred = New-Object System.Management.Automation.PSCredential -ArgumentList $adminuser,$adminpassword
-          Add-Computer -DomainName "${domainName}" -Credential $cred
-          Restart-Computer
+          # # Join Domain
+          # $adminuser = "${netBiosName}\Admin"
+          # $adminpassword = ConvertTo-SecureString -AsPlainText "${commonPassword}" -Force
+          # $cred = New-Object System.Management.Automation.PSCredential -ArgumentList $adminuser,$adminpassword
+          # Add-Computer -DomainName "${domainName}" -Credential $cred
+          # Restart-Computer
           
           cfn-signal.exe -e 0 --stack ${AWS::StackId} --resource AppServerEC2 --region ${AWS::Region}
           </powershell>
-
       Tags:
         - Key: Name
           Value: DMW-App-Server-EC2
@@ -1161,7 +1162,6 @@ Outputs:
   netBiosName:
     Description: NetBIOS name for domain
     Value: !Ref netBiosName
-    
   commonPassword:
     Description:  Password used for all domain users
     Value: !Ref commonPassword
@@ -1172,15 +1172,22 @@ Outputs:
     Export:
       Name: datasync-workshop-smb-windows-server-private-ip
 
+  # SMBWindowsServerPublicIP:
+  #   Description: Windows Server Public IP Address
+  #   Value: !GetAtt SMBWindowsServer.PublicIp
+
   dataSyncAgentPrivateIP:
     Description: DataSync Agent Private IP Address
     Value: !GetAtt dataSyncAgent.PrivateIp
+  # dataSyncAgentPublicIP:
+  #   Description: DataSync Agent Public IP Address
+  #   Value: !GetAtt dataSyncAgent.PublicIp
 
   DataSyncWorkshopSubnetForVpcEndpoint:
     Description: DataSync Workshop Subnet used by VPC Interface Endpoint
     Value: !Ref dmEndpointSubnet1
     Export:
-      Name: datasync-workshop-datasync-endpoint-subnet
+      Name: datasync-workshop-datasync-private-subnet
 
   dataSyncVpcEndpointId:
     Description: DataSync VPC Endpoint Interface
@@ -1188,17 +1195,17 @@ Outputs:
     Export:
       Name: datasync-workshop-datasync-vpc-endpoint
 
-  fsxFSId:
-    Description: FSx For Windows
-    Value: !Ref fsxFS
-    Export:
-      Name: datasync-workshop-fsx-id
+  # fsxFSId:
+  #   Description: FSx For Windows
+  #   Value: !Ref fsxFS
+  #   Export:
+  #     Name: datasync-workshop-fsx-id
 
-  fsxFSArn:
-    Description: FSx For Windows Server ARN
-    Value: !GetAtt fsxFS.ResourceARN
-    Export:
-      Name: datasync-workshop-fsx-arn
+  # fsxFSArn:
+  #   Description: FSx For Windows Server ARN
+  #   Value: !GetAtt fsxFS.ResourceARN
+  #   Export:
+  #     Name: datasync-workshop-fsx-arn
 
   vpcEndpointSecurityGroup:
     Description: Security Group for VPC Interface Endpoint

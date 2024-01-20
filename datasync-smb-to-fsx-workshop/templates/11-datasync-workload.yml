@@ -14,7 +14,7 @@ Resources:
       ActivationKey: !Ref DSActivationKey
       AgentName: FsxWorkshopAgent
       SubnetArns:
-        - !Sub ["arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/${subnetid}", subnetid: !ImportValue "datasync-workshop-datasync-private-subnet"]
+        - !Sub ["arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/${subnetid}", subnetid: !ImportValue "datasync-workshop-datasync-endpoint-subnet"]
       SecurityGroupArns:
         - !Sub ["arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:security-group/${sgid}", sgid: !ImportValue "datasync-workshop-datasync-vpcendpoint-security-group"]
       VpcEndpointId: !ImportValue "datasync-workshop-datasync-vpc-endpoint"
@@ -78,9 +78,9 @@ Resources:
     Properties:
       RetentionInDays: 7
       LogGroupName: !Join
-        - ''
-        - - DataSyncLogs-
-          - !Ref 'AWS::StackName'
+        - '-'
+        - - !Ref 'AWS::StackName'
+          - DataSyncTask-Logs
       Tags:
       - Key: Name
         Value: DMW-DataSyncLogs

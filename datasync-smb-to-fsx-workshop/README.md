@@ -43,14 +43,19 @@ To get started, go to [Module 1](module1).
 *Architecture diagram overview*
 
 ### Resources
-1. EC2 - AWS DataSync Agent EC2
+1. EC2 - App Server  
+    - connect to `SMB File Server` on TCP 445 (SMB).
+    - connect to `FSx for Windows` on TCP 445 (SMB).
+1. EC2 - AWS DataSync Agent EC2  
+    - connect to `SMB File Server` on TCP 445 (SMB).
 1. EC2 - SMB File Server (Windows Server 2016)
 1. Directory Service - Managed AD
 1. FSx for Windows File Server
 1. Secrets Manager
-1. VPC Endpoint for DataSync
-1. VPC Endpoint for Secrets Manager
 1. VPC Resources: VPC, subnets, route tables, security group, internet gateway
+1. VPC Endpoint for DataSync
+1. VPC Endpoint for Secrets Manager, CloudFormation, S3
+1. VPC Endpoint for Fleet Manager: SSM, SSMMessage, EC2Message
 1. AWS DataSync
     - Agent
     - Location: Source (SMB) and Destination (FSx)
@@ -60,7 +65,15 @@ To get started, go to [Module 1](module1).
 
 1. DataSync Agent EC2 Security Group  
     **Inbound rules**  
-    - N/A
+    - NONE
+
+    **Outbound rules**  
+    - Default rules
+
+1. App Server Security Group  
+
+    **Inbound rules**  
+    - NONE
 
     **Outbound rules**  
     - Default rules
@@ -69,6 +82,7 @@ To get started, go to [Module 1](module1).
 
     **Inbound rules**  
     - Allow TCP 445 from `DataSync Agent EC2` Security Group
+    - Allow TCP 445 from `App Server` Security Group
 
     **Outbound rules**  
     - Default rules
@@ -78,6 +92,7 @@ To get started, go to [Module 1](module1).
     - Allow TCP 139 from VPC CIDR
     - Allow TCP 53/UDP 53 from VPC CIDR
     - Allow TCP 445 from `DataSync Task Network Interfaces` Security Group
+    - Allow TCP 445 from `App Server` Security Group
 
     **Outbound rules**  
     - Default rules
