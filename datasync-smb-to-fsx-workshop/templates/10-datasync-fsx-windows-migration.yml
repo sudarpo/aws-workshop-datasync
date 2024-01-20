@@ -33,7 +33,7 @@ Metadata:
           default: AMI IDs (do not edit)
         Parameters:
           - SMBWindows2016Ami
-          # - Win2019Ami
+          - Windows2019Ami
           - DataSyncAmi
     ParameterLabels:
       # InstanceKeyPair:
@@ -49,7 +49,7 @@ Metadata:
       DataSyncAmi:
         default: 'DataSync AMI'
       SourceSMBWindowsServerInstanceType:
-        default: 'SMB Windows Server EC2 instance type'
+        default: 'EC2 instance type for SMB Windows Server and Windows Client'
       DataSyncAgentInstanceType:
         default: 'DataSync Agent EC2 instance type'
 
@@ -68,16 +68,16 @@ Parameters:
   commonPassword:
     AllowedPattern: (?=^.{6,255}$)((?=.*\d)(?=.*[A-Z])(?=.*[a-z])|(?=.*\d)(?=.*[^A-Za-z0-9])(?=.*[a-z])|(?=.*[^A-Za-z0-9])(?=.*[A-Z])(?=.*[a-z])|(?=.*\d)(?=.*[A-Z])(?=.*[^A-Za-z0-9]))^.*
     Description: Password for the domain Administrator user. MUST be at least 8 characters
-      containing AT LEAST ONE letter, number and symbol. Maximum 45 characters length.
+      containing AT LEAST ONE letter, number and symbol. Maximum 50 characters length.
     MaxLength: '50'
     MinLength: '8'
     Default: 'PBnjK-3QGq%lB2#45-vbLg#5Q9BfiUfqsR@Gdpy#sojA5'
     # NoEcho: 'true'
     Type: String
 
-  # Win2019Ami:
-  #   Type : 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
-  #   Default: '/aws/service/ami-windows-latest/Windows_Server-2019-English-Full-Base'
+  Windows2019Ami:
+    Type : 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
+    Default: '/aws/service/ami-windows-latest/Windows_Server-2019-English-Full-Base'
   SMBWindows2016Ami:
     Type : 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
     Default: '/aws/service/ami-windows-latest/Windows_Server-2016-English-Full-Base'
@@ -355,7 +355,7 @@ Resources:
       - Key: Name
         Value: DMW-SMB-EC2-SG
 
-  smbEc2SecurityGroupIngress:
+  smbEc2SecurityGroupIngress1:
     Type: AWS::EC2::SecurityGroupIngress
     Properties:
       GroupId: !Ref smbEc2SecurityGroup
@@ -364,6 +364,16 @@ Resources:
       FromPort: '445'
       ToPort: '445'
       Description: 'Allow SMB from Agent EC2'
+
+  smbEc2SecurityGroupIngress2:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref smbEc2SecurityGroup
+      SourceSecurityGroupId: !Ref clientWindowsEc2SecurityGroup
+      IpProtocol: tcp
+      FromPort: '445'
+      ToPort: '445'
+      Description: 'Allow SMB from Windows Client EC2'
 
   clientWindowsEc2SecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -722,6 +732,69 @@ Resources:
   #       ThroughputCapacity: 16
   #       PreferredSubnetId: !Ref dmAz2SubnetPrivate1 # Required for MULTI_AZ_1
 
+  ################## EC2 Windows Client
+  WindowsClientEC2:
+    Type: 'AWS::EC2::Instance'
+    CreationPolicy:
+      ResourceSignal:
+        Timeout: PT30M
+    Properties:
+      SubnetId: !Ref dmSubnetPublic2
+      ImageId: !Ref Windows2019Ami
+      InstanceType: !Ref SourceSMBWindowsServerInstanceType
+      IamInstanceProfile: !Ref 'winInstanceProfile'
+      SecurityGroupIds: 
+        - !GetAtt clientWindowsEc2SecurityGroup.GroupId
+      BlockDeviceMappings:
+        - DeviceName: /dev/sda1
+          Ebs:
+            VolumeSize: '60'
+            DeleteOnTermination: 'true'
+            VolumeType: gp3
+
+      UserData:
+        Fn::Base64: !Sub |
+          <powershell>
+          Set-ExecutionPolicy Unrestricted -Force
+
+          # Set common password
+          $localpasswd = ConvertTo-SecureString "${commonPassword}" -asplaintext -force
+          Set-LocalUser -Name Administrator -Password $localpasswd
+
+          ###
+          # Disable Internet Explorer Enhanced Security Configuration
+          function Disable-IEESC
+          {
+              $AdminKey = "HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Components\{A509B1A7-37EF-4b3f-8CFC-4F3A74704073}"
+              Set-ItemProperty -Path $AdminKey -Name "IsInstalled" -Value 0
+              $UserKey = "HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Components\{A509B1A8-37EF-4b3f-8CFC-4F3A74704073}"
+              Set-ItemProperty -Path $UserKey -Name "IsInstalled" -Value 0
+              Stop-Process -Name Explorer
+              Write-Host "IE Enhanced Security Configuration (ESC) has been disabled." -ForegroundColor Green
+          }
+
+          Disable-IEESC
+
+          ###
+          # Join Domain
+          $adminuser = "${netBiosName}\Admin"
+          $adminpassword = ConvertTo-SecureString -AsPlainText "${commonPassword}" -Force
+          $cred = New-Object System.Management.Automation.PSCredential -ArgumentList $adminuser,$adminpassword
+          Add-Computer -DomainName "${domainName}" -Credential $cred
+          Restart-Computer
+          
+          cfn-signal.exe -e 0 --stack ${AWS::StackId} --resource WindowsClientEC2 --region ${AWS::Region}
+          </powershell>
+
+      Tags:
+        - Key: Name
+          Value: DMW-Windows-Client-EC2
+        - Key: CostCenter
+          Value: Datasync Migration Workshop
+        - Key: Role
+          Value: Bastion Server
+        - Key: OS
+          Value: Windows
 
 ################## DataSync
   # VPC Endpoint
@@ -805,14 +878,20 @@ Resources:
             - !Ref 'datasyncAgentEc2SecurityGroup'
           SubnetId: !Ref 'dmSubnetPublic3'
 
-  # dataSyncLogs:
-  #   Type: AWS::Logs::LogGroup
-  #   Properties:
-  #     RetentionInDays: 3
-  #     LogGroupName: !Join
-  #       - ''
-  #       - - DataSyncLogs-
-  #         - !Ref 'AWS::StackName'
+  WorkshopDataSyncLogs:
+    Type: AWS::Logs::LogGroup
+    # DeletionPolicy: Retain
+    Properties:
+      RetentionInDays: 7
+      LogGroupName: !Join
+        - ''
+        - - DataSyncLogs-
+          - !Ref 'AWS::StackName'
+      Tags:
+      - Key: Name
+        Value: DMW-DataSyncLogs
+      - Key: CostCenter
+        Value: Datasync Migration Workshop
 
 ###################################
   # VPC Endpoint for Secrets Manager

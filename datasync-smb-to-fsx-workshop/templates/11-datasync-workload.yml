@@ -34,12 +34,12 @@ Resources:
       MountOptions: 
         Version: SMB3
 
-      # User: !Sub '{{resolve:secretsmanager:${secretName}:SecretString:username}}'
-      # Password: !Sub '{{resolve:secretsmanager:${secretName}:SecretString:password}}'
-      # Domain: !Sub '{{resolve:secretsmanager:${secretName}:SecretString:domain}}'
-      User: !Sub '{{resolve:secretsmanager:DMSourceLocationUserSecret:SecretString:username}}'
-      Password: !Sub '{{resolve:secretsmanager:DMSourceLocationUserSecret:SecretString:password}}'
-      Domain: !Sub '{{resolve:secretsmanager:DMSourceLocationUserSecret:SecretString:domain}}'
+      # User: '{{resolve:secretsmanager:${secretName}:SecretString:username}}'
+      # Password: '{{resolve:secretsmanager:${secretName}:SecretString:password}}'
+      # Domain: '{{resolve:secretsmanager:${secretName}:SecretString:domain}}'
+      User: '{{resolve:secretsmanager:DMSourceLocationUserSecret:SecretString:username}}'
+      Password: '{{resolve:secretsmanager:DMSourceLocationUserSecret:SecretString:password}}'
+      Domain: '{{resolve:secretsmanager:DMSourceLocationUserSecret:SecretString:domain}}'
       # Domain: !ImportValue "datasync-workshop-datasync-domain-name"
 
       ServerHostname: !ImportValue datasync-workshop-smb-windows-server-private-ip
@@ -60,9 +60,9 @@ Resources:
         - !Sub ["arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:security-group/${sgid}", sgid: !ImportValue "datasync-workshop-location-fsx-windows-security-group"]
       Subdirectory: '/share1'
       
-      User: !Sub '{{resolve:secretsmanager:DMSourceLocationUserSecret:SecretString:username}}'
-      Password: !Sub '{{resolve:secretsmanager:DMSourceLocationUserSecret:SecretString:password}}'
-      Domain: !Sub '{{resolve:secretsmanager:DMSourceLocationUserSecret:SecretString:domain}}'
+      User: '{{resolve:secretsmanager:DMSourceLocationUserSecret:SecretString:username}}'
+      Password: '{{resolve:secretsmanager:DMSourceLocationUserSecret:SecretString:password}}'
+      Domain: '{{resolve:secretsmanager:DMSourceLocationUserSecret:SecretString:domain}}'
 
       Tags: 
       - Key: Name
@@ -74,7 +74,7 @@ Resources:
 
   WorkshopDataSyncLogs:
     Type: AWS::Logs::LogGroup
-    DeletionPolicy: Retain
+    # DeletionPolicy: Retain
     Properties:
       RetentionInDays: 7
       LogGroupName: !Join
@@ -90,7 +90,7 @@ Resources:
   WorkshopMigrationTask1:
     Type: AWS::DataSync::Task
     Properties: 
-      # Name: WorkshopMigrationTask
+      Name: FSX Workshop Migration Task
       SourceLocationArn: !Ref SourceLocationSMB
       DestinationLocationArn: !Ref DestinationLocationFSxWindows
       CloudWatchLogGroupArn: !GetAtt WorkshopDataSyncLogs.Arn

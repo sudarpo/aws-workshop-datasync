@@ -61,7 +61,7 @@ On the CloudFormation page , click on the **Outputs** tab, as shown in the image
 ## Validation Step
 
 - Open a new tab in your browser and navigate to the AWS management console for FSx.  You should see a new file system created named "**DMW DataSync FSx**".  
-- Go to the EC2 console page and you should see two new EC2 instances named "**DMW-SMB-Windows-Server-EC2**" and "**DMW-DataSyncAgent-EC2**".
+- Go to the EC2 console page and you should see two new EC2 instances named "**DMW-Windows-Client-EC2**", "**DMW-SMB-Windows-Server-EC2**", "**DMW-DataSyncAgent-EC2**".
 
 If you do not see these resources, verify that the CloudFormation stack completed with state "CREATE_COMPLETE".
 

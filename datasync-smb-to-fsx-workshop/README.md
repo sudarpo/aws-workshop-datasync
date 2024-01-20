@@ -40,10 +40,72 @@ To get started, go to [Module 1](module1).
 ## High-Level Diagram
 
 ![](images/full-arch-v2.png)
+*Architecture diagram overview*
 
-## Low-Level Diagram
+### Resources
+1. EC2 - AWS DataSync Agent EC2
+1. EC2 - SMB File Server (Windows Server 2016)
+1. Directory Service - Managed AD
+1. FSx for Windows File Server
+1. Secrets Manager
+1. VPC Endpoint for DataSync
+1. VPC Endpoint for Secrets Manager
+1. VPC Resources: VPC, subnets, route tables, security group, internet gateway
+1. AWS DataSync
+    - Agent
+    - Location: Source (SMB) and Destination (FSx)
+    - Task
 
+### Security Group
 
+1. DataSync Agent EC2 Security Group  
+    **Inbound rules**  
+    - N/A
+
+    **Outbound rules**  
+    - Default rules
+
+1. SMB Windows Server Security Group  
+
+    **Inbound rules**  
+    - Allow TCP 445 from `DataSync Agent EC2` Security Group
+
+    **Outbound rules**  
+    - Default rules
+
+1. FSx for Windows Security Group  
+    **Inbound rules**  
+    - Allow TCP 139 from VPC CIDR
+    - Allow TCP 53/UDP 53 from VPC CIDR
+    - Allow TCP 445 from `DataSync Task Network Interfaces` Security Group
+
+    **Outbound rules**  
+    - Default rules
+
+1. DataSync Task Network Interfaces Security Group  
+
+    **Inbound rules**  
+    - Allow TCP 443 from `DataSync Agent EC2` Security Group
+
+    **Outbound rules**  
+    - Default rules
+
+1. DataSync VPC Endpoint Security Group  
+
+    **Inbound rules**  
+    - Allow TCP 443 from `DataSync Agent EC2` Security Group
+    - Allow TCP 1024-1064 from `DataSync Agent EC2` Security Group
+
+    **Outbound rules**  
+    - Default rules
+
+1. (General) VPC Endpoint Security Group  
+
+    **Inbound rules**  
+    - Allow TCP 443 from VPC CIDR
+
+    **Outbound rules**  
+    - Default rules
 
 
 ## Cost
@@ -55,3 +117,8 @@ It will cost approximately **10.00 USD** to run this workshop.  It is recommende
 - [NFS server migration using AWS DataSync and Storage Gateway](https://github.com/aws-samples/aws-datasync-migration-workshop/blob/master/workshops/nfs-migration)
 - [Migrate millions of files using AWS DataSync](https://github.com/aws-samples/aws-datasync-migration-workshop/blob/master/workshops/nfs-million-files)
 - [Get hands-on with online data migration options to simplify & accelerate your journey to AWS](https://github.com/aws-samples/aws-online-data-migration-workshop)
+
+## References
+
+- [DataSync network requirements](https://docs.aws.amazon.com/datasync/latest/userguide/datasync-network.html)
+- [How AWS DataSync transfers work](https://docs.aws.amazon.com/datasync/latest/userguide/how-datasync-transfer-works.html)
