@@ -12,9 +12,13 @@ This workshop will walk you through this scenario, using a CloudFormation templa
 
 ## Topics covered
 
-- Deploying resources using CloudFormation
-- Creating and managing FSx for Windows File Server shares
-- Using AWS DataSync to copy data from a Windows Server to FSx
+- Deploying resources using CloudFormation.
+- Creating and managing FSx for Windows File Server shares.
+- Using AWS DataSync to copy data from a Windows Server to FSx.
+- Using AWS DataSync in a more secure environment, not exposed to internet.
+- Deploying all resources in private subnets only, not using any Elastic IPs / Public IPs.
+- Using Fleet Manager Remote Desktop to connect to all Windows VM(s).
+- Deploying all the required VPC Endpoints for private connectivity.
 
 ## Prerequisites
 
